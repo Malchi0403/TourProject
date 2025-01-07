@@ -1,0 +1,126 @@
+import { Button, Modal, Form } from "react-bootstrap";
+import Palm from "../assets/images/iconPalm.png";
+import Hibiscus from "../assets/images/iconHibiscus.png";
+import { useState } from "react";
+import { useCustomMutation } from "../config/query";
+import { register } from "../utils/auth";
+import Swal from "sweetalert2";
+
+const Register = ({ showReg, handleClose }) => {
+  const [form, setForm] = useState({
+    fullname: "",
+    email: "",
+    password: "",
+    phone: "",
+    address: "",
+    gender: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const registerMutation = useCustomMutation("registUser", register);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    registerMutation.mutate(form);
+
+    Swal.fire("Good job!", "Register Success");
+    handleClose();
+  };
+
+  return (
+    <Modal centered  show={showReg} onHide={() => handleClose()} className="TextRegister">
+      <img src={Palm} alt="" className="stylePalm" />
+      <img src={Hibiscus} alt="" className="position-absolute styleHibiscus" />
+
+      <Modal.Title
+        className="text-center mt-5  TextRegister"
+        style={{ fontSize: "36px" }}
+      >
+        Register
+      </Modal.Title>
+
+      <Modal.Body className="p-5">
+        <Form  onSubmit={(e) => handleSubmit(e)}>
+          <Form.Group className="mb-1">
+            <Form.Label className="textLabelLogin">Full Name</Form.Label>
+            <Form.Control
+              name="fullname"
+              type="text"
+              onChange={handleChange}
+              autoFocus
+              placeholder="Please Input Your Name"
+              required
+            />
+          </Form.Group>
+          <Form.Group className="">
+            <Form.Label className="textLabelLogin">Email</Form.Label>
+            <Form.Control
+              name="email"
+              type="email"
+              onChange={handleChange}
+              placeholder="Please Input Your Email"
+
+              autoFocus
+              required
+            />
+          </Form.Group>
+          <Form.Group className="">
+            <Form.Label className="textLabelLogin">Password</Form.Label>
+            <Form.Control
+              name="password"
+              type="password"
+              placeholder="Please Input Your Password"
+
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group className="">
+            <Form.Label className="textLabelLogin">Phone</Form.Label>
+            <Form.Control
+              name="phone"
+              type="text"
+              placeholder="Please Input Your Password"
+
+              required
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group className="">
+            <Form.Label className="textLabelLogin">Address</Form.Label>
+            <Form.Control
+              name="address"
+              type="text"
+              required
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group className="">
+            <Form.Label className="textLabelLogin">Gender</Form.Label>
+            <Form.Control
+          as="select"
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </Form.Control>
+          </Form.Group>
+          <div className="d-flex justify-content-center pt-4">
+            <Button className="Reg" type="submit">
+              Register
+            </Button>
+          </div>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+export default Register;
