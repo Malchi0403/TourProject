@@ -15,8 +15,6 @@ type UseRepository interface {
 	UpdateUser(user models.User) (models.User, error)
 }
 
-// func Connection
-
 func RepositoryUser(db *gorm.DB) *repositories {
 	return &repositories{db}
 }
