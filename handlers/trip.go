@@ -44,7 +44,6 @@ func (h *HandlerTrip) GetDatasTrip(c echo.Context) error {
 
 func (h *HandlerTrip) GetTrip(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-
 	trip, err := h.TripRepository.GetTrip(id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
