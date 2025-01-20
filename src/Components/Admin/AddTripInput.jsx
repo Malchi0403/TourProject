@@ -15,8 +15,7 @@ const AddTripInput = () => {
     accomodation: "",
     transportation: "",
     eat: "",
-    day: "",
-    night: "",
+    day: 0,
     datetrip: "",
     price: "",
     quota: "",
@@ -67,17 +66,20 @@ const AddTripInput = () => {
     formData.set("transportation", tripData.transportation);
     formData.set("eat", tripData.eat);
     formData.set("day", tripData.day);
-    formData.set("night", tripData.night);
+    formData.set("night", tripData.day - 1);
     formData.set("datetrip", tripData.datetrip);
-    formData.set("price", tripData.price);
+    formData.set("price", tripData.price.replace(/\./g, ''));
     formData.set("quota", tripData.quota);
     formData.set("description", tripData.description);
     formData.set("image", tripData.image[0], tripData.image[0].name);
-    const result = postForm.mutate(formData);
+    const result = await postForm.mutate(formData);
     console.log(result);
     
-    Swal.fire("Good job!", "Successs");
-    navigate("/trip");
+   
+      Swal.fire("Good job!", "Successs");
+      navigate("/trip");
+    
+   
     
     } catch (error) {
       console.log(error)
@@ -90,7 +92,15 @@ const AddTripInput = () => {
       setCountries(data.value);
     }
   };
+  const handleInput = (e) => {
+    // Hanya biarkan angka dan hapus tanda non-angka
+    let value = e.target.value.replace(/[^\d]/g, '');
 
+    // Format angka dengan titik setiap 3 digit
+    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    setTripData({ ...tripData, price: value });
+  };
   return (
     <>
       <Container>
@@ -156,21 +166,14 @@ const AddTripInput = () => {
             <Form.Label>Duration</Form.Label>
             <div className="d-flex">
               <Form.Control
-                type="text"
+                type="number"
                 style={{ width: "30%" }}
                 name="day"
                 value={tripData.day}
                 onChange={handleInputChange}
               />
               <h6 style={{ paddingTop: "10px", margin: "0 18px" }}>Day</h6>
-              <Form.Control
-                type="text"
-                style={{ width: "30%" }}
-                name="night"
-                value={tripData.night}
-                onChange={handleInputChange}
-              />
-              <h6 style={{ paddingTop: "10px", margin: "0 18px" }}>Night</h6>
+             
             </div>
           </Form.Group>
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -188,7 +191,7 @@ const AddTripInput = () => {
               type="text"
               name="price"
               value={tripData.price}
-              onChange={handleInputChange}
+              onChange={handleInput}
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">

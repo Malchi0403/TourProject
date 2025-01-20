@@ -8,12 +8,10 @@ export async function addTrip(data) {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     };
-    const response = await API.post("trip", data, config);
-    if (response) {
-      return response.data.data;
-    }
+     await API.post("trip", data, config);
   } catch (error) {
     throw new Error("Failed to posted data trip ");
+  
   }
 }
 
