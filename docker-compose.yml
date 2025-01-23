@@ -1,0 +1,32 @@
+version: '3.7'
+services:
+  app:
+    container_name: golang
+    image: golang:1.0
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      - PORT=$PORT
+      - SECRET_KEY=$SECRET_KEY
+      - CLIENT_KEY=$CLIENT_KEY
+      - SERVER_KEY=$SERVER_KEY
+      - CLOUD_NAME=$CLOUD_NAME
+      - API_KEY=$API_KEY
+      - API_SECRET=$API_KEY
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    restart: always
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+      - MYSQL_DATABASE=$DB_DATABASE
+    volumes:
+      - db_data:/var/lib/mysql
+  
+volumes:
+  db_data:

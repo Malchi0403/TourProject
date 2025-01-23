@@ -1,20 +1,15 @@
 package handlers
 
 import (
-	"context"
-	"fmt"
 	dto "mytask/dto/result"
 	usersdto "mytask/dto/user"
 	"mytask/models"
 	"mytask/pkg/bcrypt"
 	repositories "mytask/repository"
-	"os"
 
 	"net/http"
 	"strconv"
 
-	"github.com/cloudinary/cloudinary-go/v2"
-	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/go-playground/validator"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -82,24 +77,9 @@ func (h *HandlerUser) CreateUser(c echo.Context) error {
 
 func (h *HandlerUser) UpdateUser(c echo.Context) error {
 	dataFile := c.Get("dataFile").(string)
-	fmt.Println("this is data file", dataFile)
+
 	userLogin := c.Get("userLogin")
 	userID := userLogin.(jwt.MapClaims)["id"].(float64)
-
-	var ctx = context.Background()
-	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
-	var API_KEY = os.Getenv("API_KEY")
-	var API_SECRET = os.Getenv("API_SECRET")
-
-	// Add your Cloudinary credentials ...
-	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
-
-	// Upload file to Cloudinary ...
-	resp, err := cld.Upload.Upload(ctx, dataFile, uploader.UploadParams{Folder: "uploads"})
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
 
 	request := usersdto.UpdateUserRequest{
 		Fullname: c.FormValue("fullname"),
@@ -107,7 +87,7 @@ func (h *HandlerUser) UpdateUser(c echo.Context) error {
 		Password: c.FormValue("password"),
 		Phone:    c.FormValue("phone"),
 		Address:  c.FormValue("address"),
-		Image:    resp.SecureURL,
+		Image:    dataFile,
 	}
 
 	profile, err := h.UserRepository.GetUser(int(userID))
@@ -132,7 +112,7 @@ func (h *HandlerUser) UpdateUser(c echo.Context) error {
 	}
 
 	if request.Image != "" {
-		profile.Image = resp.SecureURL
+		profile.Image = dataFile
 	}
 
 	data, err := h.UserRepository.UpdateUser(profile)

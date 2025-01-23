@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"fmt"
 	dto "mytask/dto/result"
 	tripdto "mytask/dto/trip"
@@ -14,7 +13,6 @@ import (
 	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/go-playground/validator"
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -55,12 +53,18 @@ func (h *HandlerTrip) GetTrip(c echo.Context) error {
 }
 
 func (h *HandlerTrip) CreateTrip(c echo.Context) error {
-	userLogin := c.Get("userLogin")
-	role := userLogin.(jwt.MapClaims)["role"].(string)
-	fmt.Println(role, "'ini role'")
+	file, err := c.FormFile("image")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "Failed to get image"})
+	}
+
+	// Buka file
+	src, err := file.Open()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: "Failed to open image"})
+	}
+	defer src.Close()
 	// if role == "admin" {
-	dataFile := c.Get("dataFile").(string)
-	fmt.Println("this is data file", dataFile)
 
 	day, _ := strconv.Atoi(c.FormValue("day"))
 	price, _ := strconv.Atoi(c.FormValue("price"))
@@ -79,25 +83,27 @@ func (h *HandlerTrip) CreateTrip(c echo.Context) error {
 		Price:          price,
 		Quota:          quota,
 		Description:    c.FormValue("description"),
-		Image:          dataFile,
+		Image:          file.Filename,
 	}
 
 	validation := validator.New()
-	err := validation.Struct(request)
+	err = validation.Struct(request)
+
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
 	}
-
-	var ctx = context.Background()
 	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
 	var API_KEY = os.Getenv("API_KEY")
 	var API_SECRET = os.Getenv("API_SECRET")
 
 	// Add your Cloudinary credentials ...
-	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+	cld, err := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: "Cloudinary initialization failed"})
+	}
 
 	// Upload file to Cloudinary ...
-	resp, err := cld.Upload.Upload(ctx, dataFile, uploader.UploadParams{Folder: "DeweTour"})
+	resp, err := cld.Upload.Upload(c.Request().Context(), src, uploader.UploadParams{Folder: "dewetour"})
 
 	if err != nil {
 		// Log error and return it to user
@@ -107,6 +113,7 @@ func (h *HandlerTrip) CreateTrip(c echo.Context) error {
 			Message: "File upload failed: " + err.Error(),
 		})
 	}
+
 	trip := models.Trip{
 		Title: request.Title,
 
@@ -132,10 +139,8 @@ func (h *HandlerTrip) CreateTrip(c echo.Context) error {
 			Message: "Trip creation failed: " + err.Error(),
 		})
 	}
-	trip, _ = h.TripRepository.GetTrip(trip.ID)
 	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: data})
-	// }
-	// return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "u re not admin"})
+
 }
 
 func (h *HandlerTrip) DeleteTrip(c echo.Context) error {

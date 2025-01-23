@@ -3,10 +3,9 @@ package main
 import (
 	"fmt"
 	"mytask/database"
-	"os"
-
 	"mytask/pkg/mysql"
 	"mytask/routes"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
