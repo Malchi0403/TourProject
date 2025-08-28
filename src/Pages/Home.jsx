@@ -15,9 +15,17 @@ const Home = () => {
 
   return (
     <>
+    <div className="backgroundCustomImage"
+    style={{
+      position:'relative',
+      top:0,
+      left:0,
+      
+    }}>
       <Navbar />
       <Jumbotron />
       <Button onSearch={handleSearch} />
+    </div>
       <Cards />
       <Contents searchTerm={searchTerm} />
       <Footer />

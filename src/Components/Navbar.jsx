@@ -46,16 +46,21 @@ function NavbarMenu() {
   // // }, [tourBookExists, navigate]);
 
   return (
-    <>
+    <div
+    style={{
+      position: 'relative',
+      top:'0',
+      left:'0'
+    }}
+    >
       <Navbar  style={ location.pathname !== "/" ? styles : {}} >
         <Container>
-          <Navbar.Brand>
+          <Navbar.Brand >
             <Link to="/">
-              <img src={Icon} alt="logo" />
+              <img src={Icon} alt="logo" className="imageLogo" />
             </Link>
           </Navbar.Brand>
-          {/* )
-        ) } */}
+          
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           {state.isLogin === true ? (
             state.user.role === "admin" ? (
@@ -100,14 +105,10 @@ function NavbarMenu() {
             )
           ) : (
             <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="ms-auto" >
+              <Nav className="ms-auto customButtonNav" >
                 <Button
                   variant="outline-light"
-                  style={{
-                    padding: "6px 23px",
-                    width:'120px',
-                  }}
-                  className="me-3  loginClassname"
+                  className="loginClassname"
                   onClick={() => handleShowLogin()}
                 >
                   Login
@@ -116,9 +117,7 @@ function NavbarMenu() {
                   variant=""
                   style={{
                     backgroundColor: "#FFAF00",
-                    padding: "6px 23px",
                     color: "#fff",
-                    width:'120px'
                     
                   }}
                   onClick={() => handleShow()}
@@ -142,7 +141,7 @@ function NavbarMenu() {
         setShowLogin={handleShowLogin}
         handleCloseLogin={handleCloseLogin}
       />
-    </>
+    </div>
   );
 }
 

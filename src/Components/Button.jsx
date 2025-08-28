@@ -23,8 +23,8 @@ const Buttons = ({ onSearch }) => {
   };
 
   return (
-    <Container className="buttonSearch">
-      <InputGroup style={{ width: "96%", marginLeft: "20px", height: "45px" }}>
+    <Container >
+      <InputGroup style={{ width: "96%",  height: "45px" }}>
         <Form.Control
           placeholder="Find Your Trip here"
           aria-label="Recipient's username"
@@ -32,6 +32,9 @@ const Buttons = ({ onSearch }) => {
           value={searchTerm}
           onChange={handleInputChange}
           onKeyPress={handleKeyPress}
+          style={{
+            width:'30%'
+          }}
         />
 
         <Button

@@ -18,7 +18,7 @@ const GroupsTour = ({ searchTerm }) => {
   });
 
   return (
-    <div className="positionGroup justify-content-center" style={{width:'100%',margin:'6rem auto 0'}}>
+    <div className="positionGroup" >
       <h1
         style={{
           fontFamily: "Avenir",
@@ -28,7 +28,7 @@ const GroupsTour = ({ searchTerm }) => {
       >
         Group tour
       </h1>
-      <div className="position-relative" style={{width:'90%',margin:'0 auto' ,display:'flex',gap:'12px',flexWrap:'wrap',}} >
+      <div className="positionItems" >
         {filteredData &&
           filteredData.map((tour) => {
             return (

@@ -12,11 +12,11 @@ const client = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <UserContextProvider>
-    <React.StrictMode>
+    {/* <React.StrictMode> */}
       <QueryClientProvider client={client}>
         <App />
         <Analytics />
       </QueryClientProvider>
-    </React.StrictMode>
+    {/* </React.StrictMode> */}
   </UserContextProvider>,
 );
